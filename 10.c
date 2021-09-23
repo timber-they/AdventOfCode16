@@ -138,17 +138,19 @@ int iterate(Bot *bots, int *outputs, int searchedLow, int searchedHigh)
 {
     int ret = -1;
     for (int i = 0; i < BOT_COUNT; i++)
+    {
         if (bots[i].lowVal == searchedLow && bots[i].highVal == searchedHigh)
-            return i+1;
-        else if (bots[i].lowVal && bots[i].highVal)
+            ret = i+1;
+        if (bots[i].lowVal && bots[i].highVal)
         {
-            ret = 0;
+            ret = ret>0 ? ret : 0;
             // ACTION
             assignNewValue(bots, outputs, bots[i].lowDest, bots[i].lowVal);
             assignNewValue(bots, outputs, bots[i].highDest, bots[i].highVal);
             bots[i].lowVal = 0;
             bots[i].highVal = 0;
         }
+    }
 
     for (int i = 0; i < BOT_COUNT; i++)
     {
@@ -194,6 +196,15 @@ int part1(FILE *in)
 
 int part2(FILE *in)
 {
-    return -2;
+    Bot bots[BOT_COUNT];
+    int outputs[OUTPUT_COUNT];
+    getBots(in, bots);
+    int res = 0;
+    for (int i = 0;; i++)
+    {
+        res = iterate(bots, outputs, SEARCHED_LOW, SEARCHED_HIGH);
+        if (res<0)
+            return outputs[0]*outputs[1]*outputs[2];
+    }
 }
 
